@@ -9,6 +9,83 @@ import * as React from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import { StaticImage } from "gatsby-plugin-image"
 
+import { useSpring, animated } from 'react-spring'
+
+import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faDribbble,
+  faTwitter,
+  faGithub,
+} from '@fortawesome/free-brands-svg-icons'
+
+const Flex = styled.div`
+  display: flex;
+  justify-content: space-between;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  height: "250px";
+`
+
+const Anchors = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+  @media (max-width: 450px) {
+    flex-direction: column;
+  }
+`
+
+const SocialIcons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`
+
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min
+}
+
+function bounceInterp(r) {
+  return `translate3d(${3 * Math.sin(r + (2 * Math.PI) / 1.6)}px, ${1 *
+    Math.sin(r + (2 * Math.PI) / 1.6)}px,0) rotate(${r * 10}deg)`
+}
+
+const Surfer = () =>{
+  const { radians } = useSpring({
+    from: {
+      radians: 2 * Math.PI,
+    },
+    to: async next => {
+      while (1) {
+        await next({ radians: 1.3 * Math.PI })
+        await next({ radians: 1.5 * Math.PI })
+        await next({ radians: 1.2 * Math.PI })
+        await next({ radians: 1.6 * Math.PI })
+      }
+    },
+  })
+  return (
+    <animated.div
+      className="script-box"
+      style={{
+        transform: radians.interpolate(bounceInterp),
+        display: 'inline-block',
+      }}
+    >
+      <div>
+        <div style={{ zIndex: 10 }}>🏄</div>
+      </div>
+    </animated.div>
+  )
+}
+
+
+
 const Bio = () => {
   const data = useStaticQuery(graphql`
     query BioQuery {
@@ -32,25 +109,32 @@ const Bio = () => {
 
   return (
     <div className="bio">
-      <StaticImage
-        className="bio-avatar"
-        layout="fixed"
-        formats={["AUTO", "WEBP", "AVIF"]}
-        src="../images/profile-pic.png"
-        width={50}
-        height={50}
-        quality={95}
-        alt="Profile picture"
-      />
-      {author?.name && (
-        <p>
-          Written by <strong>{author.name}</strong> {author?.summary || null}
-          {` `}
-          <a href={`https://twitter.com/${social?.twitter || ``}`}>
-            You should follow them on Twitter
-          </a>
-        </p>
-      )}
+       <div>
+              <p>
+                Hey fellow web surfer <Surfer /> My name is
+                <strong>Costa</strong>.
+                <br />
+                I am a software engineer & product manager.
+                <br />
+              </p>
+              <SocialIcons>
+                <FontAwesomeIcon
+                  className="social-icon"
+                  icon={faTwitter}
+                  size="lg"
+                />
+                <FontAwesomeIcon
+                  className="social-icon"
+                  icon={faGithub}
+                  size="lg"
+                />
+                <FontAwesomeIcon
+                  className="social-icon"
+                  icon={faDribbble}
+                  size="lg"
+                />
+              </SocialIcons>
+            </div>
     </div>
   )
 }
